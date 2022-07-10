@@ -1,0 +1,14 @@
+{
+"token": ":)",
+"prefix": "$",
+"ids": {
+"server-id": 0,
+"in-channel": 0,
+"out-channel": 0,
+"req_channel_id": 0,
+"req_log_id": 0,
+"tester": 0,
+"vypomoc": 0,
+"bot_id": 0
+}
+}
