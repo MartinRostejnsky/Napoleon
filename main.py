@@ -72,26 +72,29 @@ async def on_raw_reaction_add(payload):
                 await msg.add_reaction("❌")
                 users[str(payload.member.id)]["requested"] = True
 
-                with open("requests.json","w") as r:
-                    json.dump(requests, r, indent=2)
-
             else:
                 message = await channel_req.fetch_message(payload.message_id)
                 await message.remove_reaction(payload.emoji,payload.member)
 
         elif payload.channel_id == config["ids"]["req_log_id"]:
+            guild = bot.get_guild(config["ids"]["server-id"])
+            role = requests[str(payload.message_id)]["role"]
+            message = await channel_req.fetch_message(config["ids"][role])
+            member = guild.get_member(requests[str(payload.message_id)]["user"])
+            await message.remove_reaction("✅",member)
+            users[str(payload.member.id)]["requested"] = False
             if payload.emoji.name == "✅":
                 print("ano")
+                users[str(member.id)]["roles"][role] = True
+                await member.add_roles(discord.utils.get(member.guild.roles, name=role))
             elif payload.emoji.name == "❌":
                 print("nn")
-                guild = bot.get_guild(config["ids"]["server-id"])
-                message = await channel_req.fetch_message(config["ids"][requests[str(payload.message_id)]["role"]])
-                member = guild.get_member(requests[str(payload.message_id)]["user"])
-                await message.remove_reaction("✅",member)
-                users[str(payload.member.id)]["requested"] = False
             
         with open("users.json","w") as u:
             json.dump(users, u, indent=3)
+
+        with open("requests.json","w") as r:
+            json.dump(requests, r, indent=2)
 
 @bot.event
 async def on_member_join(member):
